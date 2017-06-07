@@ -1,21 +1,14 @@
-package com.moonlay.android.astar;
+package com.moonlay.android.astar.components;
 
-import android.icu.text.DateFormat;
-import android.icu.text.StringSearch;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Tris Setiawan on 5/30/2017.
  */
 
-public class Calculator implements Node.SetListener {
+public class AStar implements Node.CycleValueListener {
     int size;
     public Node[] nodes;
     static String[] values = {"", "S", "F", "2", "3", "5", "#"};
@@ -26,7 +19,7 @@ public class Calculator implements Node.SetListener {
     Node endNode;
 
 
-    public Calculator(int size) {
+    public AStar(int size) {
         this.size = size;
         this.nodes = new Node[this.size * this.size];
         int index = 0;
@@ -37,7 +30,7 @@ public class Calculator implements Node.SetListener {
             col = index % this.size;
             this.nodes[index] = new Node(row, col);
             this.nodes[index].index = index;
-            this.nodes[index].addSetListener(this);
+            this.nodes[index].addCycleValueListener(this);
             index++;
         }
     }
@@ -84,7 +77,7 @@ public class Calculator implements Node.SetListener {
             for (Node node : openList) {
                 if (currentNode == null)
                     currentNode = node;
-                else if (node.f < currentNode.f)
+                else if (node.totalCost < currentNode.totalCost)
                     currentNode = node;
             }
 
@@ -102,19 +95,19 @@ public class Calculator implements Node.SetListener {
                     continue;
 
                 boolean bestScore = false;
-                int gScore = currentNode.g + getNodeCost(neighbour);
+                int gScore = currentNode.cost + getNodeCost(neighbour);
 
                 if (openList.indexOf(neighbour) < 0) {
                     bestScore = true;
-                    neighbour.h = getManhattanDistance(neighbour, endNode);
+                    neighbour.heuristic = getManhattanDistance(neighbour, endNode);
                     openList.add(neighbour);
-                } else if (gScore < neighbour.g) {
+                } else if (gScore < neighbour.cost) {
                     bestScore = true;
                 }
                 if (bestScore) {
                     neighbour.prev = currentNode;
-                    neighbour.g = gScore;
-                    neighbour.f = neighbour.g + neighbour.h;
+                    neighbour.cost = gScore;
+                    neighbour.totalCost = neighbour.cost + neighbour.heuristic;
                 }
             }
             openListIsEmpty = openList.toArray().length == 0;

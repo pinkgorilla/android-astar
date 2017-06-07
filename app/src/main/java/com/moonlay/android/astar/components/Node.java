@@ -1,6 +1,4 @@
-package com.moonlay.android.astar;
-
-import android.net.sip.SipAudioCall;
+package com.moonlay.android.astar.components;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,21 +14,21 @@ public class Node {
     public String value;
     public Node prev;
 
-    public int f = Integer.MAX_VALUE;
-    public int g;
-    public int h;
+    public int totalCost = Integer.MAX_VALUE;
+    public int cost;
+    public int heuristic;
     boolean isPath = false;
 
     List<ValueChangedListener> listeners;
-    List<SetListener> setListeners;
-    List<PathChangedListener> isPathListeners;
+    List<CycleValueListener> cycleValueListeners;
+    List<IsPathChangedListener> isPathListeners;
 
     public Node(int row, int col) {
         this.row = row;
         this.col = col;
         this.value = "";
         this.listeners = new ArrayList<>();
-        this.setListeners = new ArrayList<>();
+        this.cycleValueListeners = new ArrayList<>();
         this.isPathListeners = new ArrayList<>();
     }
 
@@ -42,12 +40,12 @@ public class Node {
 
     public void setIsPath(boolean isPath) {
         this.isPath = isPath;
-        for (PathChangedListener listener : this.isPathListeners)
-            listener.pathChanged(this.isPath);
+        for (IsPathChangedListener listener : this.isPathListeners)
+            listener.isPathChanged(this.isPath);
     }
 
-    public void set() {
-        for (SetListener listener : this.setListeners)
+    public void cycleValue() {
+        for (CycleValueListener listener : this.cycleValueListeners)
             listener.set(this);
     }
 
@@ -55,18 +53,18 @@ public class Node {
         this.listeners.add(listener);
     }
 
-    public void addSetListener(SetListener listener) {
-        this.setListeners.add(listener);
+    public void addCycleValueListener(CycleValueListener listener) {
+        this.cycleValueListeners.add(listener);
     }
 
-    public void addIsPathChangedListener(PathChangedListener listener) {
+    public void addIsPathChangedListener(IsPathChangedListener listener) {
         this.isPathListeners.add(listener);
     }
 
     public void reset() {
-        this.f = Integer.MAX_VALUE;
-        this.g = 0;
-        this.h = 0;
+        this.totalCost = Integer.MAX_VALUE;
+        this.cost = 0;
+        this.heuristic = 0;
         this.prev = null;
         this.setIsPath(false);
     }
@@ -75,11 +73,11 @@ public class Node {
         void valueChanged(String value);
     }
 
-    public interface PathChangedListener {
-        void pathChanged(boolean isPath);
+    public interface IsPathChangedListener {
+        void isPathChanged(boolean isPath);
     }
 
-    public interface SetListener {
+    public interface CycleValueListener {
         void set(Node node);
     }
 }
