@@ -13,7 +13,7 @@ import com.moonlay.android.astar.components.Node;
  * Created by Tris Setiawan on 5/30/2017.
  */
 
-public class Cell extends android.support.v7.widget.AppCompatTextView implements Node.ValueChangedListener, View.OnClickListener, Node.IsPathChangedListener {
+public class CellView extends android.support.v7.widget.AppCompatTextView implements Node.ValueChangedListener, View.OnClickListener, Node.IsPathChangedListener {
     Node node;
     static LinearLayout.LayoutParams layoutParam;
 
@@ -22,14 +22,24 @@ public class Cell extends android.support.v7.widget.AppCompatTextView implements
         layoutParam.setMargins(3, 3, 3, 3);
     }
 
-    public Cell(Context context, Node node) {
+    public CellView(Context context) {
         super(context);
-        this.node = node;
-        this.node.addValueChangedListener(this);
-        this.node.addIsPathChangedListener(this);
         this.setText("");
         this.setOnClickListener(this);
         this.setStyles();
+    }
+    public CellView(Context context, Node node) {
+        this(context);
+        this.setNode(node);
+        this.setText("");
+        this.setOnClickListener(this);
+        this.setStyles();
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+        this.node.addValueChangedListener(this);
+        this.node.addIsPathChangedListener(this);
     }
 
     void setStyles() {

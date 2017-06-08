@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.moonlay.android.astar.components.AStar;
-import com.moonlay.android.astar.views.Cell;
+import com.moonlay.android.astar.views.CellView;
 
 public class AStarAdapter extends BaseAdapter {
 
     private final Context context;
     private final int size;
-    private Cell[] cells;
+    private CellView[] cells;
     private AStar AStar;
 
     public AStarAdapter(Context context, int size) {
@@ -25,10 +25,10 @@ public class AStarAdapter extends BaseAdapter {
     }
 
     private void initializeCells() {
-        this.cells = new Cell[this.size * this.size];
+        this.cells = new CellView[this.size * this.size];
         int index = 0;
-        for (Cell cell : this.cells) {
-            this.cells[index] = new Cell(this.context, this.AStar.nodes[index]);
+        for (CellView cell : this.cells) {
+            this.cells[index] = new CellView(this.context, this.AStar.nodes[index]);
             index++;
         }
     }
